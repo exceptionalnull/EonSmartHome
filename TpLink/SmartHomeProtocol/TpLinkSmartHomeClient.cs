@@ -3,6 +3,8 @@
  * This code is based on their work in python: https://github.com/softScheck/tplink-smartplug
  */
 
+using EonData.SmartHome.TpLink.SmartHomeProtocol;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace EonData.SmartHome.TpLink
 {
-    public class SmartHomeProtocol
+    public class TpLinkSmartHomeClient
     {
         /// <summary>
         /// Initial cypher key value to use when encrypting and decrypting data transmissions.
@@ -38,28 +40,31 @@ namespace EonData.SmartHome.TpLink
         /// Creates a new SmartHomeProtocol object
         /// </summary>
         /// <param name="Address">IP address or hostname of the smart home device</param>
-        public SmartHomeProtocol(string Address) => this.Address = Address;
+        public TpLinkSmartHomeClient(string Address) => this.Address = Address;
+
+        private async Task SendCommandAsync(ISmartHomeCommand command, CancellationToken cancellationToken)
+        {
+
+        }
 
         /// <summary>
         /// Asynchronously sends a string of data to the smart home device and returns the response string.
         /// </summary>
         /// <param name="data">JSON data command string</param>
         /// <returns>JSON data response string</returns>
-        public async Task<string> SendDataAsync(string data)
+        public async Task<string> SendDataAsync(string data, CancellationToken cancellationToken)
         {
-            string response = null;
+            string response;
 
             using (var tcp = new TcpClient())
             {
-                await tcp.ConnectAsync(Address, Port);
-                using (var netStream = tcp.GetStream())
-                {
-                    var dataBytes = Encrypt(data);
-                    await netStream.WriteAsync(dataBytes, 0, dataBytes.Length);
-                    var buffer = new byte[ReadBufferSize];
-                    await netStream.ReadAsync(buffer, 0, buffer.Length);
-                    response = Decrypt(buffer, buffer.Length);
-                }
+                await tcp.ConnectAsync(Address, Port, cancellationToken);
+                await using var netStream = tcp.GetStream();
+                var dataBytes = Encrypt(data);
+                await netStream.WriteAsync(dataBytes, 0, dataBytes.Length, cancellationToken);
+                var buffer = new byte[ReadBufferSize];
+                await netStream.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
+                response = Decrypt(buffer, buffer.Length);
             }
 
             return response;

@@ -2,7 +2,7 @@ using EonData.SmartHome.TpLink;
 
 namespace Tests.TpLink
 {
-    public class SmartHomeProtocolTests
+    public class TpLinkSmartHomeClient
     {
         readonly byte[] expectedBytes = new byte[] {
                 0,
@@ -45,7 +45,7 @@ namespace Tests.TpLink
         [Fact]
         public void CanEncrypt()
         {
-            var p = new SmartHomeProtocol("127.0.0.1");
+            var p = new EonData.SmartHome.TpLink.TpLinkSmartHomeClient("127.0.0.1");
             var returnValue = p.Encrypt(expectedString);
             Assert.Equivalent(expectedBytes, returnValue);
         }
@@ -53,7 +53,7 @@ namespace Tests.TpLink
         [Fact]
         public void CanDecrypt()
         {
-            var p = new SmartHomeProtocol("127.0.0.1");
+            var p = new EonData.SmartHome.TpLink.TpLinkSmartHomeClient("127.0.0.1");
             var returnValue = p.Decrypt(expectedBytes, expectedBytes.Length);
             Assert.Equal(expectedString, returnValue);
         }
@@ -62,7 +62,7 @@ namespace Tests.TpLink
         public void CanEncryptDecrypt()
         {
             string value = "this is a test. this is only a test. everything should work. {}!@#$%^&*()_+=-/.,;''][=-0123456789*-/+";
-            var p = new SmartHomeProtocol("127.0.0.1");
+            var p = new EonData.SmartHome.TpLink.TpLinkSmartHomeClient("127.0.0.1");
             var encValue = p.Encrypt(value);
             var decValue = p.Decrypt(encValue, encValue.Length);
             Assert.Equal(value, decValue);
