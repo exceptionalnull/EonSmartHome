@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace EonData.SmartHome.TpLink
 {
-    internal class SmartHomeProtocol
+    public class SmartHomeProtocol
     {
         /// <summary>
         /// Initial cypher key value to use when encrypting and decrypting data transmissions.
