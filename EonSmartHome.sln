@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34330.188
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TpLink", "TpLink\TpLink.csproj", "{B061024A-0DE7-4A9C-84C7-CBF320CCE3EA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.TpLink", "Tests.TpLink\Tests.TpLink.csproj", "{8B354774-8A1E-4408-BAC0-B6C89B63CB5D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B061024A-0DE7-4A9C-84C7-CBF320CCE3EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B061024A-0DE7-4A9C-84C7-CBF320CCE3EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B061024A-0DE7-4A9C-84C7-CBF320CCE3EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B061024A-0DE7-4A9C-84C7-CBF320CCE3EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B354774-8A1E-4408-BAC0-B6C89B63CB5D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B354774-8A1E-4408-BAC0-B6C89B63CB5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B354774-8A1E-4408-BAC0-B6C89B63CB5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B354774-8A1E-4408-BAC0-B6C89B63CB5D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2FB9A38B-0062-48E2-A147-3025EF4D8974}
+	EndGlobalSection
+EndGlobal
