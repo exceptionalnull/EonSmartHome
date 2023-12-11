@@ -1,6 +1,21 @@
-﻿// See https://aka.ms/new-console-template for more information
-using EonData.SmartHome.TpLink;
+﻿using EonData.SmartHome.TpLink.Devices;
+using EonData.SmartHome.TpLink.SmartHomeProtocol;
 
-Console.WriteLine("Hello, World!");
+using System.Runtime.CompilerServices;
 
-var shp = new TpLinkSmartHomeClient("192.168.86.32");
+const string deviceAddress = "192.168.86.32";
+//var shp = new SmartHomeProtocolClient(deviceAddress);
+//var cmd = new SmartHomeDeviceInfoCommand();
+//var rsp = await shp.SendCommandAsync<SmartHomeDeviceInfoResponse>(cmd, new CancellationToken());
+//Console.WriteLine(rsp);
+
+using CancellationTokenSource cts = new();
+Console.CancelKeyPress += (s, e) =>
+{
+    cts.Cancel();
+    e.Cancel = true;
+};
+
+var splug = new HS110(deviceAddress);
+var r = await splug.GetDeviceInfoAsync(cts.Token);
+Console.WriteLine($"got info for: {r.Alias}");

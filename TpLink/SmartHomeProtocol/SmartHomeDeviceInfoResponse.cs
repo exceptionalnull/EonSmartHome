@@ -41,10 +41,10 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
         public bool IsLedOff { get; set; }
 
         [JsonPropertyName("longitude_i")]
-        public string Longitude { get; set; }
+        public int Longitude { get; set; }
 
         [JsonPropertyName("latitude_i")]
-        public string Latitude { get; set; }
+        public int Latitude { get; set; }
 
         [JsonPropertyName("hwId")]
         public string HardwareId { get; set; }
