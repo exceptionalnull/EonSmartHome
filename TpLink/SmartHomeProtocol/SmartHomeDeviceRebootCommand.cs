@@ -7,7 +7,7 @@
 
         public override string CommandName => "reboot";
 
-        public override Dictionary<string, object> CommandParameters => new() { { "delay", DelaySeconds } };
+        protected override Dictionary<string, object> CommandParameters => new() { { "delay", DelaySeconds } };
 
         public int DelaySeconds { get; set; } = 1;
     }

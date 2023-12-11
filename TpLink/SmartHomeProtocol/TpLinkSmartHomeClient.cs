@@ -51,16 +51,7 @@ namespace EonData.SmartHome.TpLink
         /// <param name="command"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<T?> SendCommandAsync<T>(SmartHomeCommandBase command, CancellationToken cancellationToken) where T: SmartHomeResponse
-        {
-            
-            
-            
-            
-            // send the command and return the deserialized response
-            var responseJson = await SendDataAsync(commandJson, cancellationToken);
-            return JsonSerializer.Deserialize<T>(responseJson);
-        }
+        public async Task<T?> SendCommandAsync<T>(SmartHomeCommandBase command, CancellationToken cancellationToken) where T: SmartHomeResponse => JsonSerializer.Deserialize<T>(await SendDataAsync(command.GetCommandJson(), cancellationToken));
 
         /// <summary>
         /// Asynchronously sends a string of data to the smart home device and returns the response string.

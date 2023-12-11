@@ -1,4 +1,5 @@
-﻿namespace EonData.SmartHome.TpLink.SmartHomeProtocol
+﻿
+namespace EonData.SmartHome.TpLink.SmartHomeProtocol
 {
     public class SmartHomeDeviceOffCommand : SmartHomeCommandBase
     {
@@ -6,9 +7,6 @@
 
         public override string CommandName => "set_relay_state";
 
-        public SmartHomeDeviceOffCommand()
-        {
-            CommandParameters.Add("state", 0);
-        }
+        protected override Dictionary<string, object> CommandParameters => new() { { "state", 0 } };
     }
 }
