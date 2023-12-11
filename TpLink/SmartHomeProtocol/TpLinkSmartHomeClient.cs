@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace EonData.SmartHome.TpLink
@@ -42,9 +44,22 @@ namespace EonData.SmartHome.TpLink
         /// <param name="Address">IP address or hostname of the smart home device</param>
         public TpLinkSmartHomeClient(string Address) => this.Address = Address;
 
-        private async Task SendCommandAsync(ISmartHomeCommand command, CancellationToken cancellationToken)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="command"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public async Task<T?> SendCommandAsync<T>(SmartHomeCommandBase command, CancellationToken cancellationToken) where T: SmartHomeResponse
         {
-
+            
+            
+            
+            
+            // send the command and return the deserialized response
+            var responseJson = await SendDataAsync(commandJson, cancellationToken);
+            return JsonSerializer.Deserialize<T>(responseJson);
         }
 
         /// <summary>
@@ -52,7 +67,7 @@ namespace EonData.SmartHome.TpLink
         /// </summary>
         /// <param name="data">JSON data command string</param>
         /// <returns>JSON data response string</returns>
-        public async Task<string> SendDataAsync(string data, CancellationToken cancellationToken)
+        private async Task<string> SendDataAsync(string data, CancellationToken cancellationToken)
         {
             string response;
 

@@ -2,7 +2,7 @@ using EonData.SmartHome.TpLink;
 
 namespace Tests.TpLink
 {
-    public class TpLinkSmartHomeClient
+    public class TpLinkSmartHomeClientTests
     {
         readonly byte[] expectedBytes = new byte[] {
                 0,
