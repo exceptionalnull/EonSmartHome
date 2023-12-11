@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace EonData.SmartHome.TpLink.SmartHomeProtocol
 {
-    public class SmartHomeProtocolClient
+    public class SmartHomeClient
     {
         /// <summary>
         /// Gets or sets the IP address or hostname of the smart home device
@@ -35,7 +35,7 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
         /// Creates a new SmartHomeProtocol object
         /// </summary>
         /// <param name="Address">IP address or hostname of the smart home device</param>
-        public SmartHomeProtocolClient(string Address) => this.Address = Address;
+        public SmartHomeClient(string Address) => this.Address = Address;
 
         /// <summary>
         /// Sends a SmartHomeProtocol command to the device.
@@ -48,16 +48,23 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
         /// <returns>Specified response type.</returns>
         public async Task<T?> SendCommandAsync<T>(string commandType, string commandName, IDictionary<string, object>? commandParameters, CancellationToken cancellationToken) where T : SmartHomeResponse
         {
-            string commandJson = JsonSerializer.Serialize(new Dictionary<string, object> {
+            // json processing options
+            var jsonOptions = new JsonSerializerOptions() { PropertyNameCaseInsensitive = true };
+            jsonOptions.Converters.Add(new JsonBoolConverter());
+
+            // construct command
+            var commandObject = new Dictionary<string, object> {
                 { commandType, new Dictionary<string, object?>() {
                     { commandName, commandParameters }
                 } }
-            });
+            };
+            string commandJson = JsonSerializer.Serialize(commandObject, jsonOptions);
 
-            var responseJson = await SendDataAsync(commandJson, cancellationToken);
-            var responseJsonOptions = new JsonSerializerOptions() { PropertyNameCaseInsensitive = true };
-            responseJsonOptions.Converters.Add(new JsonBoolConverter());
-            var response = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, T>>>(responseJson, responseJsonOptions);
+            // send command
+            string responseJson = await SendDataAsync(commandJson, cancellationToken);
+
+            // process response
+            var response = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, T>>>(responseJson, jsonOptions);
             return response?[commandType][commandName];
         }
 

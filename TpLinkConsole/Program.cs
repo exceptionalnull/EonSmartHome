@@ -17,5 +17,7 @@ Console.CancelKeyPress += (s, e) =>
 };
 
 var splug = new HS110(deviceAddress);
-var r = await splug.GetDeviceInfoAsync(cts.Token);
-Console.WriteLine($"got info for: {r.Alias}");
+var a = await splug.GetDeviceInfoAsync(cts.Token);
+Console.WriteLine($"got info for: {a.Alias}");
+var b = await splug.TurnLEDLightOff(cts.Token);
+var c = await splug.TurnLEDLightOn(cts.Token);

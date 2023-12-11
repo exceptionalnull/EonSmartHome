@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,9 +11,13 @@ namespace EonData.SmartHome.TpLink.Devices
 {
     public class HS110
     {
-        private SmartHomeProtocolClient client;
-        public HS110(SmartHomeProtocolClient protocolClient) => client = protocolClient;
-        public HS110(string address) : this(new SmartHomeProtocolClient(address)) { }
-        public Task<SmartHomeDeviceInfoResponse?> GetDeviceInfoAsync(CancellationToken cancellationToken) => client.SendCommandAsync<SmartHomeDeviceInfoResponse>("system", "get_sysinfo", cancellationToken);
+        private SmartHomeClient client;
+        public HS110(SmartHomeClient protocolClient) => client = protocolClient;
+        public HS110(string address) : this(new SmartHomeClient(address)) { }
+        public Task<SmartHomeDeviceInfoResponse?> GetDeviceInfoAsync(CancellationToken cancellationToken) => client.GetDeviceInfoAsync(cancellationToken);
+        public Task<SmartHomeResponse?> TurnPlugOffAsync(CancellationToken cancellationToken) => client.SetRelayState(false, cancellationToken);
+        public Task<SmartHomeResponse?> TurnPlugOnAsync(CancellationToken cancellationToken) => client.SetRelayState(true, cancellationToken);
+        public Task<SmartHomeResponse?> TurnLEDLightOn(CancellationToken cancellationToken) => client.SetDeviceLED(true, cancellationToken);
+        public Task<SmartHomeResponse?> TurnLEDLightOff(CancellationToken cancellationToken) => client.SetDeviceLED(false, cancellationToken);
     }
 }
