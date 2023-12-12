@@ -13,31 +13,31 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
         public static Task<SmartHomeDeviceInfoResponse?> GetDeviceInfoAsync(this SmartHomeClient client, CancellationToken cancellationToken) =>
             client.SendCommandAsync<SmartHomeDeviceInfoResponse>("system", "get_sysinfo", cancellationToken);
 
-        public static Task<SmartHomeResponse?> SetRelayState(this SmartHomeClient client, bool relayOn, CancellationToken cancellationToken) =>
+        public static Task<SmartHomeResponse?> SetRelayStateAsync(this SmartHomeClient client, bool relayOn, CancellationToken cancellationToken) =>
             client.SendCommandAsync<SmartHomeResponse>("system", "set_relay_state", new Dictionary<string, object>() { { "state", relayOn } }, cancellationToken);
 
-        public static Task<SmartHomeResponse?> FactoryReset(this SmartHomeClient client, int delay, CancellationToken cancellationToken) =>
+        public static Task<SmartHomeResponse?> FactoryResetAsync(this SmartHomeClient client, int delay, CancellationToken cancellationToken) =>
             client.SendCommandAsync<SmartHomeResponse>("system", "reset", new Dictionary<string, object>() { { "delay", delay } }, cancellationToken);
 
-        public static Task<SmartHomeResponse?> SetLEDState(this SmartHomeClient client, bool lightOn, CancellationToken cancellationToken) =>
+        public static Task<SmartHomeResponse?> SetLEDStateAsync(this SmartHomeClient client, bool lightOn, CancellationToken cancellationToken) =>
             client.SendCommandAsync<SmartHomeResponse>("system", "set_led_off", new Dictionary<string, object>() { { "off", !lightOn } }, cancellationToken);
 
-        public static Task<SmartHomeResponse?> SetAlias(this SmartHomeClient client, string alias, CancellationToken cancellationToken) =>
+        public static Task<SmartHomeResponse?> SetAliasAsync(this SmartHomeClient client, string alias, CancellationToken cancellationToken) =>
             client.SendCommandAsync<SmartHomeResponse>("system", "set_dev_alias", new Dictionary<string, object>() { { "alias", alias } }, cancellationToken);
 
-        public static Task<SmartHomeResponse?> SetMAC(this SmartHomeClient client, string MAC, CancellationToken cancellationToken) =>
+        public static Task<SmartHomeResponse?> SetMACAsync(this SmartHomeClient client, string MAC, CancellationToken cancellationToken) =>
             client.SendCommandAsync<SmartHomeResponse>("system", "set_mac_addr", new Dictionary<string, object>() { { "mac", MAC } }, cancellationToken);
 
-        public static Task<SmartHomeResponse?> SetDeviceId(this SmartHomeClient client, string deviceId, CancellationToken cancellationToken) =>
+        public static Task<SmartHomeResponse?> SetDeviceIdAsync(this SmartHomeClient client, string deviceId, CancellationToken cancellationToken) =>
             client.SendCommandAsync<SmartHomeResponse>("system", "set_device_id", new Dictionary<string, object>() { { "deviceId", deviceId } }, cancellationToken);
 
-        public static Task<SmartHomeResponse?> SetLocation(this SmartHomeClient client, decimal coordLong, decimal coordLat, CancellationToken cancellationToken) =>
+        public static Task<SmartHomeResponse?> SetLocationAsync(this SmartHomeClient client, decimal coordLong, decimal coordLat, CancellationToken cancellationToken) =>
             client.SendCommandAsync<SmartHomeResponse>("system", "set_dev_location", new Dictionary<string, object>() { { "longitude", coordLong }, { "latitude", coordLat } }, cancellationToken);
 
-        public static Task<SmartHomeResponse?> SetHardwareId(this SmartHomeClient client, string hardwareId, CancellationToken cancellationToken) =>
+        public static Task<SmartHomeResponse?> SetHardwareIdAsync(this SmartHomeClient client, string hardwareId, CancellationToken cancellationToken) =>
             client.SendCommandAsync<SmartHomeResponse>("system", "set_hw_id", new Dictionary<string, object>() { { "hwId", hardwareId } }, cancellationToken);
 
-        public static Task<SmartHomeResponse?> CheckBootloader(this SmartHomeClient client, CancellationToken cancellationToken) =>
+        public static Task<SmartHomeResponse?> CheckBootloaderAsync(this SmartHomeClient client, CancellationToken cancellationToken) =>
             client.SendCommandAsync<SmartHomeResponse>("system", "test_check_uboot", cancellationToken);
 
         public static Task<SmartHomeResponse?> RebootAsync(this SmartHomeClient client, int delay, CancellationToken cancellationToken) =>
@@ -113,7 +113,7 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
                 { "sec", timeZoneSettings.DateTime.Second },
                 { "index", timeZoneSettings.Index }
             }, cancellationToken);
-        
+
         
         /* emeter */
 
@@ -184,7 +184,7 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
         //    client.SendCommandAsync<SmartHomeResponse>("count_down", "edit_rule", rule, cancellationToken);
 
         // { "count_down":{ "delete_rule":{ "id":"7C90311A1CD3227F25C6001D88F7FC13"} } }
-        //public static Task<SmartHomeResponse?> DeleteCountDownRuleAsync(this SmartHomeClient client, string ruleId, CancellationToken cancellationToken) =>
+        public static Task<SmartHomeResponse?> DeleteCountDownRuleAsync(this SmartHomeClient client, string ruleId, CancellationToken cancellationToken) => throw new NotImplementedException();
         //    client.SendCommandAsync<SmartHomeResponse>("count_down", "delete_rule", new { id = ruleId }, cancellationToken);
 
         // { "count_down":{ "delete_all_rules":null} }
