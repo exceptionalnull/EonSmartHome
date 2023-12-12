@@ -9,13 +9,33 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
     public static partial class SmartHomeClientExtensions
     {
         /* system */
-
+        
+        /// <summary>
+        /// Gets the device info.
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         public static Task<SmartHomeDeviceInfoResponse?> GetDeviceInfoAsync(this SmartHomeClient client, CancellationToken cancellationToken) =>
             client.SendCommandAsync<SmartHomeDeviceInfoResponse>("system", "get_sysinfo", cancellationToken);
 
+        /// <summary>
+        /// Sets the smart plug switch on or off.
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="relayOn"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         public static Task<SmartHomeResponse?> SetRelayStateAsync(this SmartHomeClient client, bool relayOn, CancellationToken cancellationToken) =>
             client.SendCommandAsync<SmartHomeResponse>("system", "set_relay_state", new Dictionary<string, object>() { { "state", relayOn } }, cancellationToken);
 
+        /// <summary>
+        /// Factory resets the device.
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="delay">Delay to wait before applying the reset.</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         public static Task<SmartHomeResponse?> FactoryResetAsync(this SmartHomeClient client, int delay, CancellationToken cancellationToken) =>
             client.SendCommandAsync<SmartHomeResponse>("system", "reset", new Dictionary<string, object>() { { "delay", delay } }, cancellationToken);
 

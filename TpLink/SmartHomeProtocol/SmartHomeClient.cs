@@ -65,6 +65,9 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
 
             // process response
             var response = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, T>>>(responseJson, jsonOptions);
+            if ((response?[commandType][commandName].ErrorCode ?? 0) != 0) {
+                throw new Exception($"error code in response to {commandType}:{commandName} - {response![commandType][commandName].ErrorCode}");
+            }
             return response?[commandType][commandName];
         }
 
