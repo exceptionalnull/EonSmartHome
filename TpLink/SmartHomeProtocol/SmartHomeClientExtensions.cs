@@ -71,7 +71,7 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
         public static Task<SmartHomeResponse?> WifiNetworkScanAsync(this SmartHomeClient client, int refresh, CancellationToken cancellationToken) =>
             client.SendCommandAsync<SmartHomeResponse>("netif", "get_scaninfo", new Dictionary<string, object>() { { "refresh", refresh } }, cancellationToken);
 
-        public static Task<SmartHomeResponse?> WifiNetworConnectAsync(this SmartHomeClient client, string ssid, string password, int keyType, CancellationToken cancellationToken) =>
+        public static Task<SmartHomeResponse?> WifiNetworConnectAsync(this SmartHomeClient client, string ssid, string password, WifiEncryption keyType, CancellationToken cancellationToken) =>
             client.SendCommandAsync<SmartHomeResponse>("netif", "set_stainfo", new Dictionary<string, object>() { { "ssid", ssid }, { "password", password }, { "key_type", keyType } }, cancellationToken);
 
 
@@ -91,8 +91,8 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
 
         public static Task<SmartHomeResponse?> UnregisterCloudAsync(this SmartHomeClient client, CancellationToken cancellationToken) =>
             client.SendCommandAsync<SmartHomeResponse>("cnCloud", "unbind", cancellationToken);
-
-
+        
+        
         /* time */
 
         public static Task<SmartHomeResponse?> GetTimeAsync(this SmartHomeClient client, CancellationToken cancellationToken) =>
@@ -103,20 +103,18 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
 
         // TODO: this one needs further investigation.
         // { "time":{ "set_timezone":{ "year":2016,"month":1,"mday":1,"hour":10,"min":10,"sec":10,"index":42} } }
-        public static Task<SmartHomeResponse?> SetTimeZoneAsync(this SmartHomeClient client, int year, int month, int day, int hour, int minute, int second, int index, CancellationToken cancellationToken) =>
-            client.SendCommandAsync<SmartHomeResponse>("time", "set_timezone", new Dictionary<string, object>()
-            {
-        { "year", year },
-        { "month", month },
-        { "mday", day },
-        { "hour", hour },
-        { "min", minute },
-        { "sec", second },
-        { "index", index }
+        public static Task<SmartHomeResponse?> SetTimeZoneAsync(this SmartHomeClient client, SmartHomeTimezoneSettings timeZoneSettings, CancellationToken cancellationToken) =>
+            client.SendCommandAsync<SmartHomeResponse>("time", "set_timezone", new Dictionary<string, object>() {
+                { "year", timeZoneSettings.DateTime.Year },
+                { "month", timeZoneSettings.DateTime.Month },
+                { "mday", timeZoneSettings.DateTime.Day },
+                { "hour", timeZoneSettings.DateTime.Hour },
+                { "min", timeZoneSettings.DateTime.Minute },
+                { "sec", timeZoneSettings.DateTime.Second },
+                { "index", timeZoneSettings.Index }
             }, cancellationToken);
-
-
-
+        
+        
         /* emeter */
 
         public static Task<SmartHomeResponse?> GetRealtimeMetricsAsync(this SmartHomeClient client, CancellationToken cancellationToken) =>
@@ -158,16 +156,16 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
             client.SendCommandAsync<SmartHomeResponse>("schedule", "get_rules", cancellationToken);
 
         // { "schedule":{ "add_rule": {...}, "set_overall_enable":{ "enable":1} } }
-        public static Task<SmartHomeResponse?> AddScheduleRuleAsync(this SmartHomeClient client, SmartHomeScheduleRule rule, bool enabled, CancellationToken cancellationToken) =>
-            client.SendCommandAsync<SmartHomeResponse>("schedule", "add_rule", new { rule, set_overall_enable = enabled }, cancellationToken);
+        public static Task<SmartHomeResponse?> AddScheduleRuleAsync(this SmartHomeClient client, SmartHomeScheduleRule rule, bool enabled, CancellationToken cancellationToken) => throw new NotImplementedException();
+        //    client.SendCommandAsync<SmartHomeResponse>("schedule", "add_rule", new { rule, set_overall_enable = enabled }, cancellationToken);
 
         // { "schedule":{ "edit_rule": {...} } }
-        public static Task<SmartHomeResponse?> EditScheduleRuleAsync(this SmartHomeClient client, SmartHomeScheduleRule rule, CancellationToken cancellationToken) =>
-            client.SendCommandAsync<SmartHomeResponse>("schedule", "edit_rule", rule, cancellationToken);
+        public static Task<SmartHomeResponse?> EditScheduleRuleAsync(this SmartHomeClient client, SmartHomeScheduleRule rule, CancellationToken cancellationToken) => throw new NotImplementedException();
+        //    client.SendCommandAsync<SmartHomeResponse>("schedule", "edit_rule", rule, cancellationToken);
 
         // { "schedule":{ "delete_rule": { "id":"4B44932DFC09780B554A740BC1798CBC"} } }
-        public static Task<SmartHomeResponse?> DeleteScheduleRuleAsync(this SmartHomeClient client, string ruleId, CancellationToken cancellationToken) =>
-            client.SendCommandAsync<SmartHomeResponse>("schedule", "delete_rule", new { id = ruleId }, cancellationToken);
+        public static Task<SmartHomeResponse?> DeleteScheduleRuleAsync(this SmartHomeClient client, string ruleId, CancellationToken cancellationToken) => throw new NotImplementedException();
+        //    client.SendCommandAsync<SmartHomeResponse>("schedule", "delete_rule", new { id = ruleId }, cancellationToken);
 
         // { "schedule":{ "delete_all_rules":null,"erase_runtime_stat":null} }
         public static Task<SmartHomeResponse?> DeleteAllScheduleRulesAsync(this SmartHomeClient client, CancellationToken cancellationToken) =>
@@ -178,16 +176,16 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
             client.SendCommandAsync<SmartHomeResponse>("count_down", "get_rules", cancellationToken);
 
         // { "count_down":{ "add_rule":{ "enable":1,"delay":1800,"act":1,"name":"turn on"} } }
-        public static Task<SmartHomeResponse?> AddCountDownRuleAsync(this SmartHomeClient client, SmartHomeCountDownRule rule, CancellationToken cancellationToken) =>
-            client.SendCommandAsync<SmartHomeResponse>("count_down", "add_rule", rule, cancellationToken);
+        public static Task<SmartHomeResponse?> AddCountDownRuleAsync(this SmartHomeClient client, SmartHomeCountDownRule rule, CancellationToken cancellationToken) => throw new NotImplementedException();
+        //    client.SendCommandAsync<SmartHomeResponse>("count_down", "add_rule", rule, cancellationToken);
 
         // { "count_down":{ "edit_rule":{ "enable":1,"id":"7C90311A1CD3227F25C6001D88F7FC13","delay":1800,"act":1,"name":"turn on"} } }
-        public static Task<SmartHomeResponse?> EditCountDownRuleAsync(this SmartHomeClient client, SmartHomeCountDownRule rule, CancellationToken cancellationToken) =>
-            client.SendCommandAsync<SmartHomeResponse>("count_down", "edit_rule", rule, cancellationToken);
+        public static Task<SmartHomeResponse?> EditCountDownRuleAsync(this SmartHomeClient client, SmartHomeCountDownRule rule, CancellationToken cancellationToken) => throw new NotImplementedException();
+        //    client.SendCommandAsync<SmartHomeResponse>("count_down", "edit_rule", rule, cancellationToken);
 
         // { "count_down":{ "delete_rule":{ "id":"7C90311A1CD3227F25C6001D88F7FC13"} } }
-        public static Task<SmartHomeResponse?> DeleteCountDownRuleAsync(this SmartHomeClient client, string ruleId, CancellationToken cancellationToken) =>
-            client.SendCommandAsync<SmartHomeResponse>("count_down", "delete_rule", new { id = ruleId }, cancellationToken);
+        //public static Task<SmartHomeResponse?> DeleteCountDownRuleAsync(this SmartHomeClient client, string ruleId, CancellationToken cancellationToken) =>
+        //    client.SendCommandAsync<SmartHomeResponse>("count_down", "delete_rule", new { id = ruleId }, cancellationToken);
 
         // { "count_down":{ "delete_all_rules":null} }
         public static Task<SmartHomeResponse?> DeleteAllCountDownRulesAsync(this SmartHomeClient client, CancellationToken cancellationToken) =>
@@ -198,16 +196,16 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
             client.SendCommandAsync<SmartHomeResponse>("anti_theft", "get_rules", cancellationToken);
 
         // { "anti_theft":{ "add_rule": {...}, "set_overall_enable":1} }
-        public static Task<SmartHomeResponse?> AddAntiTheftRuleAsync(this SmartHomeClient client, SmartHomeAntiTheftRule rule, bool enable, CancellationToken cancellationToken) =>
-            client.SendCommandAsync<SmartHomeResponse>("anti_theft", "add_rule", new { rule, set_overall_enable = enable }, cancellationToken);
+        public static Task<SmartHomeResponse?> AddAntiTheftRuleAsync(this SmartHomeClient client, SmartHomeAntiTheftRule rule, bool enable, CancellationToken cancellationToken) => throw new NotImplementedException();
+        //    client.SendCommandAsync<SmartHomeResponse>("anti_theft", "add_rule", new { rule, set_overall_enable = enable }, cancellationToken);
 
         // { "anti_theft":{ "edit_rule": {...}, "set_overall_enable":1} }
-        public static Task<SmartHomeResponse?> EditAntiTheftRuleAsync(this SmartHomeClient client, SmartHomeAntiTheftRule rule, bool enable, CancellationToken cancellationToken) =>
-            client.SendCommandAsync<SmartHomeResponse>("anti_theft", "edit_rule", new { rule, set_overall_enable = enable }, cancellationToken);
+        public static Task<SmartHomeResponse?> EditAntiTheftRuleAsync(this SmartHomeClient client, SmartHomeAntiTheftRule rule, bool enable, CancellationToken cancellationToken) => throw new NotImplementedException();
+        //    client.SendCommandAsync<SmartHomeResponse>("anti_theft", "edit_rule", new { rule, set_overall_enable = enable }, cancellationToken);
 
         // { "anti_theft":{ "delete_rule":{ "id":"E36B1F4466B135C1FD481F0B4BFC9C30"} } }
-        public static Task<SmartHomeResponse?> DeleteAntiTheftRuleAsync(this SmartHomeClient client, string ruleId, CancellationToken cancellationToken) =>
-            client.SendCommandAsync<SmartHomeResponse>("anti_theft", "delete_rule", new { id = ruleId }, cancellationToken);
+        public static Task<SmartHomeResponse?> DeleteAntiTheftRuleAsync(this SmartHomeClient client, string ruleId, CancellationToken cancellationToken) => throw new NotImplementedException();
+        //    client.SendCommandAsync<SmartHomeResponse>("anti_theft", "delete_rule", new { id = ruleId }, cancellationToken);
 
         // { "anti_theft":{ "delete_all_rules":null} }
         public static Task<SmartHomeResponse?> DeleteAllAntiTheftRulesAsync(this SmartHomeClient client, CancellationToken cancellationToken) =>
@@ -215,11 +213,3 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
 
     }
 }
-
-
-
-/*
-public static Task<SmartHomeResponse?> SetThing(this SmartHomeClient client, string thing, CancellationToken cancellationToken) =>
-    client.SendCommandAsync<SmartHomeResponse>("system", "", new Dictionary<string, object>() { { "", thing } }, cancellationToken);
-
-*/
