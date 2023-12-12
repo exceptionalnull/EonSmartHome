@@ -17,7 +17,7 @@ namespace EonData.SmartHome.TpLink.Devices
         public Task<SmartHomeDeviceInfoResponse?> GetDeviceInfoAsync(CancellationToken cancellationToken) => client.GetDeviceInfoAsync(cancellationToken);
         public Task<SmartHomeResponse?> TurnPlugOffAsync(CancellationToken cancellationToken) => client.SetRelayState(false, cancellationToken);
         public Task<SmartHomeResponse?> TurnPlugOnAsync(CancellationToken cancellationToken) => client.SetRelayState(true, cancellationToken);
-        public Task<SmartHomeResponse?> TurnLEDLightOn(CancellationToken cancellationToken) => client.SetDeviceLED(true, cancellationToken);
-        public Task<SmartHomeResponse?> TurnLEDLightOff(CancellationToken cancellationToken) => client.SetDeviceLED(false, cancellationToken);
+        public Task<SmartHomeResponse?> TurnLEDLightOn(CancellationToken cancellationToken) => client.SetLEDState(true, cancellationToken);
+        public Task<SmartHomeResponse?> TurnLEDLightOff(CancellationToken cancellationToken) => client.SetLEDState(false, cancellationToken);
     }
 }
