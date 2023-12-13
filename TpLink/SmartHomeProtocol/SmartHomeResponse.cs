@@ -12,5 +12,8 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
     {
         [JsonPropertyName("err_code")]
         public int ErrorCode { get; set; }
+
+        [JsonPropertyName("err_msg")]
+        public string? ErrorMessage { get; set; }
     }
 }

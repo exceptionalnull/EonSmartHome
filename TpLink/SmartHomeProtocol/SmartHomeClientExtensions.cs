@@ -39,12 +39,33 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
         public static Task<SmartHomeResponse?> FactoryResetAsync(this SmartHomeClient client, int delay, CancellationToken cancellationToken) =>
             client.SendCommandAsync<SmartHomeResponse>("system", "reset", new Dictionary<string, object>() { { "delay", delay } }, cancellationToken);
 
+        /// <summary>
+        /// Turns the device's LED on or off.
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="lightOn">Set to true to turn the LED on.</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         public static Task<SmartHomeResponse?> SetLEDStateAsync(this SmartHomeClient client, bool lightOn, CancellationToken cancellationToken) =>
             client.SendCommandAsync<SmartHomeResponse>("system", "set_led_off", new Dictionary<string, object>() { { "off", !lightOn } }, cancellationToken);
 
+        /// <summary>
+        /// Sets the device's name.
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="alias">Name for the device.</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         public static Task<SmartHomeResponse?> SetAliasAsync(this SmartHomeClient client, string alias, CancellationToken cancellationToken) =>
             client.SendCommandAsync<SmartHomeResponse>("system", "set_dev_alias", new Dictionary<string, object>() { { "alias", alias } }, cancellationToken);
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="MAC"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         public static Task<SmartHomeResponse?> SetMACAsync(this SmartHomeClient client, string MAC, CancellationToken cancellationToken) =>
             client.SendCommandAsync<SmartHomeResponse>("system", "set_mac_addr", new Dictionary<string, object>() { { "mac", MAC } }, cancellationToken);
 

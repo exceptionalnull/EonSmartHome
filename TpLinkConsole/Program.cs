@@ -15,6 +15,8 @@ Dictionary<string, string> devices = new() {
 };
 string deviceAddress = devices["leds"];
 
+const string oldmac = "50:C7:BF:4A:41:D9";
+
 using CancellationTokenSource cts = new();
 Console.CancelKeyPress += (s, e) =>
 {
@@ -27,6 +29,7 @@ var a = await client.GetDeviceInfoAsync(cts.Token);
 Console.WriteLine($"got info for: {a.Alias}");
 //Console.ReadLine();
 //var b = await client.SetRelayStateAsync(false, cts.Token);
+var c = await client.SetMACAsync("AA:BB:CC:DD:EE:FF", cts.Token);
 
 
 //var splug = new HS110(deviceAddress);
