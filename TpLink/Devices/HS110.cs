@@ -9,10 +9,9 @@ using System.Threading.Tasks;
 
 namespace EonData.SmartHome.TpLink.Devices
 {
-    public class HS110
+    public class HS110 : SmartHomeDeviceBase
     {
-        private SmartHomeClient client;
-        public HS110(SmartHomeClient protocolClient) => client = protocolClient;
+        public HS110(SmartHomeClient protocolClient) : base(protocolClient) { }
         public HS110(string address) : this(new SmartHomeClient(address)) { }
         public Task<SmartHomeDeviceInfoResponse?> GetDeviceInfoAsync(CancellationToken cancellationToken) => client.GetDeviceInfoAsync(cancellationToken);
         public Task<SmartHomeResponse?> TurnPlugOffAsync(CancellationToken cancellationToken) => client.SetRelayStateAsync(false, cancellationToken);
