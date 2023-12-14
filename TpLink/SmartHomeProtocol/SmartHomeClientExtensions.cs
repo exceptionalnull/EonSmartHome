@@ -60,24 +60,58 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
             client.SendCommandAsync<SmartHomeResponse>("system", "set_dev_alias", new Dictionary<string, object>() { { "alias", alias } }, cancellationToken);
 
         /// <summary>
-        /// 
+        /// Sets the device's MAC.
         /// </summary>
         /// <param name="client"></param>
-        /// <param name="MAC"></param>
+        /// <param name="MAC">MAC address</param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
+        /// <remarks>This only seems to return error -2. Needs further investigation.</remarks>
         public static Task<SmartHomeResponse?> SetMACAsync(this SmartHomeClient client, string MAC, CancellationToken cancellationToken) =>
             client.SendCommandAsync<SmartHomeResponse>("system", "set_mac_addr", new Dictionary<string, object>() { { "mac", MAC } }, cancellationToken);
 
+        /// <summary>
+        /// Sets the device ID.
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="deviceId">Device ID</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        /// <remarks>This only seems to return error -2. Needs further investigation.</remarks>
         public static Task<SmartHomeResponse?> SetDeviceIdAsync(this SmartHomeClient client, string deviceId, CancellationToken cancellationToken) =>
             client.SendCommandAsync<SmartHomeResponse>("system", "set_device_id", new Dictionary<string, object>() { { "deviceId", deviceId } }, cancellationToken);
 
-        public static Task<SmartHomeResponse?> SetLocationAsync(this SmartHomeClient client, decimal coordLong, decimal coordLat, CancellationToken cancellationToken) =>
-            client.SendCommandAsync<SmartHomeResponse>("system", "set_dev_location", new Dictionary<string, object>() { { "longitude", coordLong }, { "latitude", coordLat } }, cancellationToken);
 
+        /// <summary>
+        /// Sets the device's location.
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="coordLat">Latitude</param>
+        /// <param name="coordLong">Longitude</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        /// <remarks>Expected values are still returning 'invalid argument'</remarks>
+        public static Task<SmartHomeResponse?> SetLocationAsync(this SmartHomeClient client, decimal coordLat, decimal coordLong, CancellationToken cancellationToken) =>
+            client.SendCommandAsync<SmartHomeResponse>("system", "set_dev_location", new Dictionary<string, object>() { { "latitude", coordLat }, { "longitude", coordLong } }, cancellationToken);
+
+        /// <summary>
+        /// Set the device's hardware ID.
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="hardwareId">Hardware ID</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        /// <remarks>This only seems to return error -2. Needs further investigation.</remarks>
         public static Task<SmartHomeResponse?> SetHardwareIdAsync(this SmartHomeClient client, string hardwareId, CancellationToken cancellationToken) =>
             client.SendCommandAsync<SmartHomeResponse>("system", "set_hw_id", new Dictionary<string, object>() { { "hwId", hardwareId } }, cancellationToken);
 
+        /// <summary>
+        /// Checks the device's bootloader.
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        /// <remarks>This only seems to return error -2. Needs further investigation.</remarks>
         public static Task<SmartHomeResponse?> CheckBootloaderAsync(this SmartHomeClient client, CancellationToken cancellationToken) =>
             client.SendCommandAsync<SmartHomeResponse>("system", "test_check_uboot", cancellationToken);
 
