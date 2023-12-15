@@ -16,8 +16,9 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
         /// <param name="client"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public static Task<SmartHomeDeviceInfoResponse?> GetDeviceInfoAsync(this SmartHomeClient client, CancellationToken cancellationToken) =>
+        public static Task<SmartHomeDeviceInfoResponse> GetDeviceInfoAsync(this SmartHomeClient client, CancellationToken cancellationToken) =>
             client.SendCommandAsync<SmartHomeDeviceInfoResponse>("system", "get_sysinfo", cancellationToken);
+            
 
         /// <summary>
         /// Sets the smart plug switch on or off.
