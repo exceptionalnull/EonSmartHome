@@ -24,10 +24,10 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
                     { CommandName, CommandParameters }
                 } }
             };
-            return JsonSerializer.Serialize(commandObject, GetDefaultSerializerOptions());
+            return JsonSerializer.Serialize(commandObject, GetCommandSerializerOptions());
         }
 
-        protected JsonSerializerOptions GetDefaultSerializerOptions()
+        protected JsonSerializerOptions GetCommandSerializerOptions()
         {
             var jsonOptions = new JsonSerializerOptions() { PropertyNameCaseInsensitive = true };
             jsonOptions.Converters.Add(new JsonBoolConverter());
@@ -37,7 +37,7 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
         internal virtual async Task<T> ExecuteAsync(SmartHomeProtocol protocol, CancellationToken cancellationToken)
         {
             string responseJson = await protocol.SendDataAsync(GetCommandJson(), cancellationToken);
-            var response = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, T>>>(responseJson, GetDefaultSerializerOptions());
+            var response = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, T>>>(responseJson, GetCommandSerializerOptions());
             if (response == null || !response.ContainsKey(CommandType) || !response[CommandType].ContainsKey(CommandName))
             {
                 throw new SmartHomeMalformedResponseException(CommandType, CommandName, protocol.Address, responseJson);

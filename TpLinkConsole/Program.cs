@@ -12,20 +12,20 @@ Dictionary<string, string> devices = new() {
     { "xmas", "192.168.86.56" }, //hs100
     { "leds", "192.168.86.57" },
 
-
+    /*
     { "dryer", "192.168.86.32" },
     { "toytv", "192.168.86.26" }, //hs100
     { "fsun", "192.168.86.36" }, //hs100
     { "bdtbl", "192.168.86.37" },
 
     { "fish", "192.168.86.30" },
+    */
 };
 string deviceAddress = devices["leds"];
 
 const string oldmac = "50:C7:BF:4A:41:D9";
 const string oldhwid = "8006E965DE6F4384A1258DC65108EA9D183E774B";
-//lat: -316702
-//lng: 1157080
+//lat: -316702; lng: 1157080
 
 using CancellationTokenSource cts = new();
 Console.CancelKeyPress += (s, e) =>
@@ -40,10 +40,9 @@ try
     var client = new SmartHomeClient(deviceAddress);
     var a = await client.GetDeviceInfoAsync(cts.Token);
     Console.WriteLine($"got info for: {a.Alias}");
-    //Console.ReadLine();
     //var b = await client.SetRelayStateAsync(true, cts.Token);
     //var c = await client.SetLocationAsync(234333 / 10000 * -1, 1800000 / 10000, cts.Token);
-    var d = await client.CheckBootloaderAsync(cts.Token);
+    var d = await client.WifiNetworkScanAsync(1, cts.Token);
 }
 catch (SmartHomeException ex)
 {
