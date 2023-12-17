@@ -6,7 +6,28 @@
     <Nullable>enable</Nullable>
     <AssemblyName>EonData.SmartHome.$(MSBuildProjectName)</AssemblyName>
     <RootNamespace>EonData.SmartHome.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageId>EonSmartHome.TpLink</PackageId>
+    <Title>EonSmartHome TpLink integration library</Title>
+    <Product>EonSmartHome.TpLink</Product>
+    <Description>An integration library for TpLink smart home devices like plugs, lights, etc.</Description>
+    <Copyright>2023</Copyright>
+    <PackageProjectUrl>https://github.com/exceptionalnull/EonSmartHome</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/exceptionalnull/EonSmartHome.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>IoT, smarthome</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <AssemblyVersion>0.0.1</AssemblyVersion>
+    <FileVersion>0.0.1</FileVersion>
+    <Version>0.0.1-alpha</Version>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\LICENSE.txt">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="System.Text.Json" Version="8.0.0" />
