@@ -280,12 +280,23 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
         
         /* emeter */
 
-        public static Task<SmartHomeResponse> GetRealtimeMetricsAsync(this SmartHomeClient client, CancellationToken cancellationToken) =>
-            client.SendCommandAsync<SmartHomeResponse>("emeter", "get_realtime", cancellationToken);
+        /// <summary>
+        /// Gets the current power usage statistics
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public static Task<SmartHomeEMeterRealtimeResponse> GetRealtimeMetricsAsync(this SmartHomeClient client, CancellationToken cancellationToken) =>
+            client.SendCommandAsync<SmartHomeEMeterRealtimeResponse>("emeter", "get_realtime", cancellationToken);
 
-        // { "emeter":{ "get_vgain_igain":{ } } }
-        public static Task<SmartHomeResponse> GetEMeterGainAsync(this SmartHomeClient client, CancellationToken cancellationToken) =>
-            client.SendCommandAsync<SmartHomeResponse>("emeter", "get_vgain_igain", cancellationToken);
+        /// <summary>
+        /// Gets the voltage and current gain settings
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public static Task<SmartHomeEMeterGainResponse> GetEMeterGainAsync(this SmartHomeClient client, CancellationToken cancellationToken) =>
+            client.SendCommandAsync<SmartHomeEMeterGainResponse>("emeter", "get_vgain_igain", cancellationToken);
 
         // { "emeter":{ "set_vgain_igain":{ "vgain":13462,"igain":16835} } }
         public static Task<SmartHomeResponse> SetEMeterGainAsync(this SmartHomeClient client, int voltageGain, int currentGain, CancellationToken cancellationToken) =>
@@ -295,13 +306,31 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
         public static Task<SmartHomeResponse> StartCalibrationAsync(this SmartHomeClient client, int targetVoltage, int targetCurrent, CancellationToken cancellationToken) =>
             client.SendCommandAsync<SmartHomeResponse>("emeter", "start_calibration", new Dictionary<string, object>() { { "vtarget", targetVoltage }, { "itarget", targetCurrent } }, cancellationToken);
 
-        // { "emeter":{ "get_daystat":{ "month":1,"year":2016} } }
-        public static Task<SmartHomeResponse> GetDayStatsAsync(this SmartHomeClient client, int month, int year, CancellationToken cancellationToken) =>
-            client.SendCommandAsync<SmartHomeResponse>("emeter", "get_daystat", new Dictionary<string, object>() { { "month", month }, { "year", year } }, cancellationToken);
+        /// <summary>
+        /// Gets the power usage statistics for a given month broken down by day
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="month">Month to get statistics for</param>
+        /// <param name="year">Year to get the month's statistics for</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public static async Task<IEnumerable<SmartHomeEMeterDayStat>> GetDayStatsAsync(this SmartHomeClient client, int month, int year, CancellationToken cancellationToken) {
+            var response = await client.SendCommandAsync<SmartHomeEMeterDayStatsResponse>("emeter", "get_daystat", new Dictionary<string, object>() { { "month", month }, { "year", year } }, cancellationToken);
+            return response.Days;
+        }
 
-        // { "emeter":{ "get_monthstat":{ "year":2016} } }
-        public static Task<SmartHomeResponse> GetMonthStatsAsync(this SmartHomeClient client, int year, CancellationToken cancellationToken) =>
-            client.SendCommandAsync<SmartHomeResponse>("emeter", "get_monthstat", new Dictionary<string, object>() { { "year", year } }, cancellationToken);
+        /// <summary>
+        /// Gets the power usage statistics for a given year broken down by month
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="year">Year to get statistics for</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public static async Task<IEnumerable<SmartHomeEMeterMonthStat>> GetMonthStatsAsync(this SmartHomeClient client, int year, CancellationToken cancellationToken)
+        {
+            var response = await client.SendCommandAsync<SmartHomeEMeterMonthStatsResponse>("emeter", "get_monthstat", new Dictionary<string, object>() { { "year", year } }, cancellationToken);
+            return response.Months;
+        }
 
         // { "emeter":{ "erase_emeter_stat":null} }
         public static Task<SmartHomeResponse> EraseEMeterStatsAsync(this SmartHomeClient client, CancellationToken cancellationToken) =>
