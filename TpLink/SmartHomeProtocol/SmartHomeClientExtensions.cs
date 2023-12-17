@@ -211,8 +211,11 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         /// <remarks>it is unclear exactly what the refresh value is. using 1 seems to work fine.</remarks>
-        public static Task<SmartHomeWifiListResponse> WifiNetworkScanAsync(this SmartHomeClient client, int refresh, CancellationToken cancellationToken) =>
-            client.SendCommandAsync<SmartHomeWifiListResponse>("netif", "get_scaninfo", new Dictionary<string, object>() { { "refresh", refresh } }, cancellationToken);
+        public static async Task<IEnumerable<WifiNetwork>> WifiNetworkScanAsync(this SmartHomeClient client, int refresh, CancellationToken cancellationToken)
+        {
+            var response = await client.SendCommandAsync<SmartHomeWifiListResponse>("netif", "get_scaninfo", new Dictionary<string, object>() { { "refresh", refresh } }, cancellationToken);
+            return response.WifiNetworks;
+        }
 
         /// <summary>
         /// Connect to a wifi network

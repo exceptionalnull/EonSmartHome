@@ -22,7 +22,7 @@ namespace EonData.SmartHome.TpLink.Devices
         public Task SetAliasAsync(string alias, CancellationToken cancellationToken) => client.SetAliasAsync(alias, cancellationToken);
         public Task RebootAsync(int delay, CancellationToken cancellationToken) => client.RebootAsync(delay, cancellationToken);
         /* wifi */
-
+        public Task<IEnumerable<WifiNetwork>> WifiNetworkScan(CancellationToken cancellationToken) => client.WifiNetworkScanAsync(1, cancellationToken);
         /* time */
         public Task<SmartHomeTimeResponse> GetTimeAsync(CancellationToken cancellationToken) => client.GetTimeAsync(cancellationToken);
         public Task<SmartHomeTimeZoneResponse> GetZimeZoneAsync(CancellationToken cancellationToken) => client.GetTimeZoneAsync(cancellationToken);
