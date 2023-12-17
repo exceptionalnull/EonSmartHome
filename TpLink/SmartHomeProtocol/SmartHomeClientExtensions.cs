@@ -223,6 +223,7 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
         /// <param name="keyType">Encryption type</param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
+        /// <remarks>untested.</remarks>
         public static Task<SmartHomeResponse> WifiNetworConnectAsync(this SmartHomeClient client, string ssid, string password, WifiEncryption keyType, CancellationToken cancellationToken) =>
             client.SendCommandAsync<SmartHomeResponse>("netif", "set_stainfo", new Dictionary<string, object>() { { "ssid", ssid }, { "password", password }, { "key_type", keyType } }, cancellationToken);
 
