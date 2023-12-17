@@ -13,10 +13,10 @@ namespace EonData.SmartHome.TpLink.Devices
     {
         public HS110(SmartHomeClient protocolClient) : base(protocolClient) { }
         public HS110(string address) : this(new SmartHomeClient(address)) { }
-        public Task<SmartHomeDeviceInfoResponse?> GetDeviceInfoAsync(CancellationToken cancellationToken) => client.GetDeviceInfoAsync(cancellationToken);
-        public Task<SmartHomeResponse?> TurnPlugOffAsync(CancellationToken cancellationToken) => client.SetRelayStateAsync(false, cancellationToken);
-        public Task<SmartHomeResponse?> TurnPlugOnAsync(CancellationToken cancellationToken) => client.SetRelayStateAsync(true, cancellationToken);
-        public Task<SmartHomeResponse?> TurnLEDLightOn(CancellationToken cancellationToken) => client.SetLEDStateAsync(true, cancellationToken);
-        public Task<SmartHomeResponse?> TurnLEDLightOff(CancellationToken cancellationToken) => client.SetLEDStateAsync(false, cancellationToken);
+        public Task<SmartHomeDeviceInfoResponse> GetDeviceInfoAsync(CancellationToken cancellationToken) => client.GetDeviceInfoAsync(cancellationToken);
+        public Task TurnPlugOffAsync(CancellationToken cancellationToken) => client.SetRelayStateAsync(false, cancellationToken);
+        public Task TurnPlugOnAsync(CancellationToken cancellationToken) => client.SetRelayStateAsync(true, cancellationToken);
+        public Task TurnLEDLightOn(CancellationToken cancellationToken) => client.SetLEDStateAsync(true, cancellationToken);
+        public Task TurnLEDLightOff(CancellationToken cancellationToken) => client.SetLEDStateAsync(false, cancellationToken);
     }
 }
