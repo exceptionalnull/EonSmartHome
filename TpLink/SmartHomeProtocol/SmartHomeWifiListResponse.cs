@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace EonData.SmartHome.TpLink.SmartHomeProtocol
 {
-    public class WifiNetworkListResponse : SmartHomeResponse
+    public class SmartHomeWifiListResponse : SmartHomeResponse
     {
         [JsonPropertyName("ap_list")]
         public IEnumerable<WifiNetwork> WifiNetworks { get; set; }

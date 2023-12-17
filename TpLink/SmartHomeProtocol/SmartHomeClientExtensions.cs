@@ -170,7 +170,7 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
             client.SendCommandAsync<SmartHomeResponse>("system", "download_firmware", new Dictionary<string, object>() { { "url", firmwareUrl } }, cancellationToken);
 
         /// <summary>
-        /// untested.
+        /// Get Download State
         /// </summary>
         /// <param name="client"></param>
         /// <param name="cancellationToken"></param>
@@ -180,7 +180,7 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
             client.SendCommandAsync<SmartHomeResponse>("system", "get_download_state", cancellationToken);
 
         /// <summary>
-        /// untested.
+        /// Flash Downloaded Firmware
         /// </summary>
         /// <param name="client"></param>
         /// <param name="cancellationToken"></param>
@@ -190,7 +190,7 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
             client.SendCommandAsync<SmartHomeResponse>("system", "flash_firmware", cancellationToken);
 
         /// <summary>
-        /// untested.
+        /// Check Config
         /// </summary>
         /// <param name="client"></param>
         /// <param name="cancellationToken"></param>
@@ -203,9 +203,26 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
 
         /* network */
 
-        public static Task<WifiNetworkListResponse> WifiNetworkScanAsync(this SmartHomeClient client, int refresh, CancellationToken cancellationToken) =>
-            client.SendCommandAsync<WifiNetworkListResponse>("netif", "get_scaninfo", new Dictionary<string, object>() { { "refresh", refresh } }, cancellationToken);
+        /// <summary>
+        /// Scan for list of available APs
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="refresh">refresh(?)</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        /// <remarks>it is unclear exactly what the refresh value is. using 1 seems to work fine.</remarks>
+        public static Task<SmartHomeWifiListResponse> WifiNetworkScanAsync(this SmartHomeClient client, int refresh, CancellationToken cancellationToken) =>
+            client.SendCommandAsync<SmartHomeWifiListResponse>("netif", "get_scaninfo", new Dictionary<string, object>() { { "refresh", refresh } }, cancellationToken);
 
+        /// <summary>
+        /// Connect to a wifi network
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="ssid">SSID to connect to</param>
+        /// <param name="password">Password for the network</param>
+        /// <param name="keyType">Encryption type</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         public static Task<SmartHomeResponse> WifiNetworConnectAsync(this SmartHomeClient client, string ssid, string password, WifiEncryption keyType, CancellationToken cancellationToken) =>
             client.SendCommandAsync<SmartHomeResponse>("netif", "set_stainfo", new Dictionary<string, object>() { { "ssid", ssid }, { "password", password }, { "key_type", keyType } }, cancellationToken);
 
@@ -229,25 +246,36 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
         
         
         /* time */
+        /// <summary>
+        /// Gets the current time set on the device
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public static Task<SmartHomeTimeResponse> GetTimeAsync(this SmartHomeClient client, CancellationToken cancellationToken) =>
+            client.SendCommandAsync<SmartHomeTimeResponse>("time", "get_time", cancellationToken);
 
-        public static Task<SmartHomeResponse> GetTimeAsync(this SmartHomeClient client, CancellationToken cancellationToken) =>
-            client.SendCommandAsync<SmartHomeResponse>("time", "get_time", cancellationToken);
-
-        public static Task<SmartHomeResponse> GetTimeZoneAsync(this SmartHomeClient client, CancellationToken cancellationToken) =>
-            client.SendCommandAsync<SmartHomeResponse>("time", "get_timezone", cancellationToken);
+        /// <summary>
+        /// Gets the device's configured timezone
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns>A timezone index value</returns>
+        public static Task<SmartHomeTimeZoneResponse> GetTimeZoneAsync(this SmartHomeClient client, CancellationToken cancellationToken) =>
+            client.SendCommandAsync<SmartHomeTimeZoneResponse>("time", "get_timezone", cancellationToken);
 
         // TODO: this one needs further investigation.
         // { "time":{ "set_timezone":{ "year":2016,"month":1,"mday":1,"hour":10,"min":10,"sec":10,"index":42} } }
-        public static Task<SmartHomeResponse> SetTimeZoneAsync(this SmartHomeClient client, SmartHomeTimezoneSettings timeZoneSettings, CancellationToken cancellationToken) =>
-            client.SendCommandAsync<SmartHomeResponse>("time", "set_timezone", new Dictionary<string, object>() {
-                { "year", timeZoneSettings.DateTime.Year },
-                { "month", timeZoneSettings.DateTime.Month },
-                { "mday", timeZoneSettings.DateTime.Day },
-                { "hour", timeZoneSettings.DateTime.Hour },
-                { "min", timeZoneSettings.DateTime.Minute },
-                { "sec", timeZoneSettings.DateTime.Second },
-                { "index", timeZoneSettings.Index }
-            }, cancellationToken);
+        public static Task<SmartHomeResponse> SetTimeZoneAsync(this SmartHomeClient client, SmartHomeTimeSettings timeZoneSettings, CancellationToken cancellationToken) => throw new NotImplementedException();
+            //client.SendCommandAsync<SmartHomeResponse>("time", "set_timezone", new Dictionary<string, object>() {
+            //    { "year", timeZoneSettings.DateTime.Year },
+            //    { "month", timeZoneSettings.DateTime.Month },
+            //    { "mday", timeZoneSettings.DateTime.Day },
+            //    { "hour", timeZoneSettings.DateTime.Hour },
+            //    { "min", timeZoneSettings.DateTime.Minute },
+            //    { "sec", timeZoneSettings.DateTime.Second },
+            //    { "index", timeZoneSettings.Index }
+            //}, cancellationToken);
 
         
         /* emeter */

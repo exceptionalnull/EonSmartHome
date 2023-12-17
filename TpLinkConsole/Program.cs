@@ -40,9 +40,10 @@ try
     var client = new SmartHomeClient(deviceAddress);
     var a = await client.GetDeviceInfoAsync(cts.Token);
     Console.WriteLine($"got info for: {a.Alias}");
-    //var b = await client.SetRelayStateAsync(true, cts.Token);
-    //var c = await client.SetLocationAsync(234333 / 10000 * -1, 1800000 / 10000, cts.Token);
-    var d = await client.WifiNetworkScanAsync(1, cts.Token);
+    //await client.SetRelayStateAsync(false, cts.Token);
+    //await client.SetRelayStateAsync(true, cts.Token);
+    //var d = await client.SetLocationAsync(234333 / 10000 * -1, 1800000 / 10000, cts.Token);
+    var e = await client.GetTimeZoneAsync(cts.Token);
 }
 catch (SmartHomeException ex)
 {
