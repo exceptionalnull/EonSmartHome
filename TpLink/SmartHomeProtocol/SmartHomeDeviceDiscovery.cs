@@ -11,10 +11,19 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
 {
     public class SmartHomeDeviceDiscovery : IDisposable
     {
+        /// <summary>
+        /// Time to wait when listening for responses.
+        /// </summary>
         public TimeSpan DiscoveryTimeout { get; set; } = TimeSpan.FromSeconds(5);
 
+        /// <summary>
+        /// Delay between sending discovery packets.
+        /// </summary>
         public TimeSpan DiscoveryDelay { get; set; } = TimeSpan.FromMilliseconds(600);
 
+        /// <summary>
+        /// Number of timeouts before giving up on discovery.
+        /// </summary>
         public int TimeoutRetries { get; set; } = 2;
 
         public IReadOnlyList<IPEndPoint> DeviceAddresses => deviceAddresses.AsReadOnly();
@@ -27,10 +36,21 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
         private readonly UdpClient udp = new UdpClient(SmartHomeProtocol.Port) { EnableBroadcast = true };
         private List<IPEndPoint> deviceAddresses = new List<IPEndPoint>();
 
+        /// <inheritdoc/>
         public void Dispose() => udp.Dispose();
 
+        /// <summary>
+        /// Runs the device discovery process asynchronously.
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         public Task DiscoverDevicesAsync(CancellationToken cancellationToken) => Task.WhenAll(SendDiscoveryPacketsAsync(cancellationToken), ListenForDevicesAsync(cancellationToken));
 
+        /// <summary>
+        /// Sends discovery packets to the broadcast address.
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         private async Task SendDiscoveryPacketsAsync(CancellationToken cancellationToken)
         {
             // create discovery packet
@@ -46,6 +66,11 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
             }
         }
 
+        /// <summary>
+        /// Listens for responses from devices.
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         private async Task ListenForDevicesAsync(CancellationToken cancellationToken)
         {
             int timeouts = 0;
