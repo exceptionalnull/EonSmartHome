@@ -20,7 +20,7 @@ Dictionary<string, string> devices = new() {
 
     { "fish", "192.168.86.30" },
 };
-string deviceAddress = devices["dryer"];
+string deviceAddress = devices["leds"];
 
 const string oldmac = "50:C7:BF:4A:41:D9";
 const string oldhwid = "8006E965DE6F4384A1258DC65108EA9D183E774B";
@@ -42,7 +42,8 @@ try
     //await client.SetRelayStateAsync(false, cts.Token);
     //await client.SetRelayStateAsync(true, cts.Token);
     //var d = await client.SetLocationAsync(234333 / 10000 * -1, 1800000 / 10000, cts.Token);
-    var e = await client.GetMonthStatsAsync(2023, cts.Token);
+    //var e = await client.GetMonthStatsAsync(2023, cts.Token);
+    await client.DiscoverDevicesAsync(cts.Token);
 }
 catch (SmartHomeException ex)
 {

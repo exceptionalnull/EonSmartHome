@@ -17,7 +17,7 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
             CommandParameters = commandParameters;
         }
 
-        protected virtual string GetCommandJson()
+        internal virtual string GetCommandJson()
         {
             var commandObject = new Dictionary<string, object> {
                 { CommandType, new Dictionary<string, object?>() {
@@ -27,28 +27,28 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
             return JsonSerializer.Serialize(commandObject, GetCommandSerializerOptions());
         }
 
-        protected JsonSerializerOptions GetCommandSerializerOptions()
+        internal virtual async Task<T> ExecuteAsync(SmartHomeProtocol protocol, string address, CancellationToken cancellationToken)
         {
-            var jsonOptions = new JsonSerializerOptions() { PropertyNameCaseInsensitive = true };
-            jsonOptions.Converters.Add(new JsonBoolConverter());
-            return jsonOptions;
-        }
-
-        internal virtual async Task<T> ExecuteAsync(SmartHomeProtocol protocol, CancellationToken cancellationToken)
-        {
-            string responseJson = await protocol.SendDataAsync(GetCommandJson(), cancellationToken);
+            string responseJson = await protocol.SendDataAsync(address, GetCommandJson(), cancellationToken);
             var response = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, T>>>(responseJson, GetCommandSerializerOptions());
             if (response == null || !response.ContainsKey(CommandType) || !response[CommandType].ContainsKey(CommandName))
             {
-                throw new SmartHomeMalformedResponseException(CommandType, CommandName, protocol.Address, responseJson);
+                throw new SmartHomeMalformedResponseException(CommandType, CommandName, address, responseJson);
             }
 
             T responseObject = response[CommandType][CommandName];
             if ((responseObject?.ErrorCode ?? 0) != 0)
             {
-                throw new SmartHomeException(CommandType, CommandName, protocol.Address, responseObject!.ErrorCode, responseObject?.ErrorMessage);
+                throw new SmartHomeException(CommandType, CommandName, address, responseObject!.ErrorCode, responseObject?.ErrorMessage);
             }
             return responseObject!;
+        }
+
+        protected JsonSerializerOptions GetCommandSerializerOptions()
+        {
+            var jsonOptions = new JsonSerializerOptions() { PropertyNameCaseInsensitive = true };
+            jsonOptions.Converters.Add(new JsonBoolConverter());
+            return jsonOptions;
         }
     }
 }
