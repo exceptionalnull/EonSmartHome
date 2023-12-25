@@ -21,8 +21,6 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
 
         public SmartHomeClient(string deviceAddress) => Address = deviceAddress;
 
-        public SmartHomeClient(string Address, int Port) : this(Address) => protocol.Port = Port;
-
         /// <summary>
         /// Sends a SmartHomeProtocol command to the device.
         /// </summary>
