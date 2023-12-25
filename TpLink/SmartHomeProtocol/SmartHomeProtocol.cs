@@ -21,6 +21,26 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
         public int ReadBufferSize { get; set; } = 2048;
 
         /// <summary>
+        /// Time to wait when listening for responses.
+        /// </summary>
+        public TimeSpan DiscoveryTimeout { get; set; } = TimeSpan.FromSeconds(5);
+
+        /// <summary>
+        /// Delay between sending discovery packets.
+        /// </summary>
+        public TimeSpan DiscoveryDelay { get; set; } = TimeSpan.FromMilliseconds(600);
+
+        /// <summary>
+        /// Number of timeouts before giving up on discovery.
+        /// </summary>
+        public int DiscoveryRetries { get; set; } = 2;
+
+        /// <summary>
+        /// Gets or sets the number of discovery packets to send when discovering devices. (Default is 3)
+        /// </summary>
+        public int DiscoveryPackets { get; set; } = 3;
+
+        /// <summary>
         /// Asynchronously sends a string of data to the smart home device and returns the response string.
         /// </summary>
         /// <param name="data">JSON data command string</param>
@@ -50,9 +70,58 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
         /// <returns>Device addresses.</returns>
         public async Task<IEnumerable<string>> DiscoverDevicesAsync(CancellationToken cancellationToken)
         {
-            using SmartHomeDeviceDiscovery discovery = new SmartHomeDeviceDiscovery();
-            await discovery.DiscoverDevicesAsync(cancellationToken);
-            return discovery.DeviceAddresses.Select(x => x.Address.ToString());
+            using UdpClient udp = new UdpClient(Port) { EnableBroadcast = true };
+            var listenTask = ListenForDevicesAsync(udp, cancellationToken);
+            await Task.WhenAll(SendDiscoveryPacketsAsync(udp, cancellationToken), listenTask);
+            return (await listenTask).Select(x => x.Address.ToString());
+        }
+
+        /// <summary>
+        /// Sends discovery packets to the broadcast address.
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        private async Task SendDiscoveryPacketsAsync(UdpClient udp, CancellationToken cancellationToken)
+        {
+            // create discovery packet
+            IPEndPoint broadcastEndpoint = new IPEndPoint(IPAddress.Broadcast, Port);
+            var command = new SmartHomeCommand<SmartHomeResponse>("system", "get_sysinfo");
+            var commandJson = command.GetCommandJson();
+            var discoveryPacket = SmartHomeCypher.Encrypt(commandJson);
+
+            for (int i = 0; i < DiscoveryPackets; i++)
+            {
+                await udp.SendAsync(discoveryPacket, discoveryPacket.Length, broadcastEndpoint);
+                await Task.Delay(DiscoveryDelay); // stagger the sending of packets
+            }
+        }
+
+        /// <summary>
+        /// Listens for responses from devices.
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        private async Task<IEnumerable<IPEndPoint>> ListenForDevicesAsync(UdpClient udp, CancellationToken cancellationToken)
+        {
+            List<IPEndPoint> deviceAddresses = new();
+            int timeouts = 0;
+            while (timeouts < DiscoveryRetries)
+            {
+                if (udp.Client.Poll(DiscoveryTimeout, SelectMode.SelectRead))
+                {
+                    UdpReceiveResult response = await udp.ReceiveAsync(cancellationToken);
+                    string responseString = SmartHomeCypher.Decrypt(response.Buffer, response.Buffer.Length);
+                    if (!deviceAddresses.Contains(response.RemoteEndPoint))
+                    {
+                        deviceAddresses.Add(response.RemoteEndPoint);
+                    }
+                }
+                else
+                {
+                    timeouts++;
+                }
+            }
+            return deviceAddresses.AsReadOnly();
         }
     }
 }
