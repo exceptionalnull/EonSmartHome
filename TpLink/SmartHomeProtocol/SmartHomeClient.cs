@@ -31,7 +31,7 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
         /// <param name="cancellationToken"><inheritdoc/></param>
         /// <returns>Specified response type.</returns>
         public Task<T> SendCommandAsync<T>(string commandType, string commandName, IDictionary<string, object>? commandParameters, CancellationToken cancellationToken) where T : SmartHomeResponse =>
-            SendCommandAsync<T>(new SmartHomeCommand<T>(commandType, commandName, commandParameters), cancellationToken);
+            SendCommandAsync(new SmartHomeCommand<T>(commandType, commandName, commandParameters), cancellationToken);
 
         /// <summary>
         /// Sends a SmartHomeProtocol command with no parameters to the device.
