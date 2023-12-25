@@ -43,6 +43,11 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
             return response;
         }
 
+        /// <summary>
+        /// Discovers devices on the local network.
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns>Device addresses.</returns>
         public async Task<IEnumerable<string>> DiscoverDevicesAsync(CancellationToken cancellationToken)
         {
             using SmartHomeDeviceDiscovery discovery = new SmartHomeDeviceDiscovery();

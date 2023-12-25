@@ -45,9 +45,21 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
         public Task<T> SendCommandAsync<T>(string commandType, string commandName, CancellationToken cancellationToken) where T : SmartHomeResponse =>
             SendCommandAsync<T>(commandType, commandName, null, cancellationToken);
 
+        /// <summary>
+        /// Sends a SmartHomeProtocol command to the device.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="command">SmartHomeCommand object</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         public Task<T> SendCommandAsync<T>(SmartHomeCommand<T> command, CancellationToken cancellationToken) where T : SmartHomeResponse =>
             command.ExecuteAsync(protocol, Address, cancellationToken);
 
-        public Task DiscoverDevicesAsync(CancellationToken cancellationToken) => protocol.DiscoverDevicesAsync(cancellationToken);
+        /// <summary>
+        /// Discovers devices on the local network.
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns>Device addresses.</returns>
+        public Task<IEnumerable<string>> DiscoverDevicesAsync(CancellationToken cancellationToken) => protocol.DiscoverDevicesAsync(cancellationToken);
     }
 }
