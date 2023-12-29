@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace EonData.SmartHome.TpLink.SmartHomeProtocol
 {
+    /// <summary>
+    /// Used to encrypt and decrypt data sent to and from the TP-Link smart home device.
+    /// </summary>
     public static class SmartHomeCypher
     {
         /// <summary>
@@ -20,12 +23,8 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
         /// <returns>Encrypted byte array</returns>
         public static byte[] Encrypt(string data, bool usePadding)
         {
-            var result = new List<byte>();
-            if (usePadding)
-            {
-                result.AddRange(new List<byte>() { 0, 0, 0, (byte)data.Length });
-            }
 
+            List<byte> result = usePadding ? new() { 0, 0, 0, (byte)data.Length } : new();
             var key = INITIAL_CYPHERKEY;
 
             foreach (int dataChar in data)
