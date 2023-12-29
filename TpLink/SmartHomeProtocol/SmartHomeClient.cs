@@ -16,11 +16,9 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
 {
     public class SmartHomeClient
     {
-        private readonly SmartHomeProtocol protocol;
+        public string Address { get; set; }
 
-        public SmartHomeClient(string Address) => protocol = new SmartHomeProtocol(Address);
-
-        public SmartHomeClient(string Address, int Port) : this(Address) => protocol.Port = Port;
+        public SmartHomeClient(string deviceAddress) => Address = deviceAddress;
 
         /// <summary>
         /// Sends a SmartHomeProtocol command to the device.
@@ -32,7 +30,7 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
         /// <param name="cancellationToken"><inheritdoc/></param>
         /// <returns>Specified response type.</returns>
         public Task<T> SendCommandAsync<T>(string commandType, string commandName, IDictionary<string, object>? commandParameters, CancellationToken cancellationToken) where T : SmartHomeResponse =>
-            SendCommandAsync<T>(new SmartHomeCommand<T>(commandType, commandName, commandParameters), cancellationToken);
+            SendCommandAsync(new SmartHomeCommand<T>(commandType, commandName, commandParameters), cancellationToken);
 
         /// <summary>
         /// Sends a SmartHomeProtocol command with no parameters to the device.
@@ -46,9 +44,14 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
         public Task<T> SendCommandAsync<T>(string commandType, string commandName, CancellationToken cancellationToken) where T : SmartHomeResponse =>
             SendCommandAsync<T>(commandType, commandName, null, cancellationToken);
 
+        /// <summary>
+        /// Sends a SmartHomeProtocol command to the device.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="command">SmartHomeCommand object</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         public Task<T> SendCommandAsync<T>(SmartHomeCommand<T> command, CancellationToken cancellationToken) where T : SmartHomeResponse =>
-            command.ExecuteAsync(protocol, cancellationToken);
-
-        
+            command.ExecuteAsync(Address, cancellationToken);
     }
 }
