@@ -44,16 +44,16 @@ try
     //var e = await client.GetMonthStatsAsync(2023, cts.Token);
 
     /* discovery */
-    var protocol = new SmartHomeProtocol();
-    var r = await protocol.DiscoverDevicesAsync(cts.Token);
+    var discovery = new SmartHomeDeviceDiscovery();
+    var r = await discovery.DiscoverDevicesAsync(cts.Token);
     int l = 0;
     foreach(var da in r)
     {
         try
         {
-            var discoveryClient = new SmartHomeClient(da);
+            var discoveryClient = new SmartHomeClient(da.Key);
             var i = await discoveryClient.GetDeviceInfoAsync(cts.Token);
-            Console.WriteLine($"[{++l}] device at {da} alias: {i.Alias}");
+            Console.WriteLine($"[{++l}] device at {da.Key} alias: {i.Alias} == {da.Value.Alias}");
         }
         catch(Exception ex) { Console.WriteLine($"error with device at {da}: {ex.Message}"); }
     }
