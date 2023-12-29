@@ -13,6 +13,8 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
         private readonly UdpClient udp = new(SmartHomeProtocol.Port);
         private readonly SemaphoreSlim discoverySemaphore = new(0, 1);
         private readonly SmartHomeCommand<SmartHomeDeviceInfoResponse> command = new("system", "get_sysinfo");
+        private bool isDiscovering;
+        private object discoveryLock = new();
         private bool disposedValue = false;
 
         /// <summary>
@@ -38,10 +40,29 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
         /// <returns>Device addresses.</returns>
         public async Task<IReadOnlyDictionary<string, SmartHomeDeviceInfoResponse>> DiscoverDevicesAsync(CancellationToken cancellationToken)
         {
-            var sendingPackets = SendDiscoveryPacketsAsync(cancellationToken);
-            var listeningForDevices = ListenForDevicesAsync(cancellationToken);
-            await Task.WhenAll(sendingPackets, listeningForDevices);
-            return await listeningForDevices;
+            lock (discoveryLock)
+            {
+                if (isDiscovering)
+                {
+                    throw new InvalidOperationException("Already discovering tplink devices.");
+                }
+                isDiscovering = true;
+            }
+
+            try
+            {
+                var sendingPackets = SendDiscoveryPacketsAsync(cancellationToken);
+                var listeningForDevices = ListenForDevicesAsync(cancellationToken);
+                await Task.WhenAll(sendingPackets, listeningForDevices);
+                return await listeningForDevices;
+            }
+            finally
+            {
+                lock (discoveryLock)
+                {
+                    isDiscovering = false;
+                }
+            }
         }
 
         /// <summary>
