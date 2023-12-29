@@ -21,27 +21,38 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
         {
             var commandObject = new Dictionary<string, object> {
                 { CommandType, new Dictionary<string, object?>() {
-                    { CommandName, CommandParameters }
+                    { CommandName, CommandParameters ?? new Dictionary<string, object>() }
                 } }
             };
             return JsonSerializer.Serialize(commandObject, GetCommandSerializerOptions());
         }
 
-        internal virtual async Task<T> ExecuteAsync(SmartHomeProtocol protocol, string address, CancellationToken cancellationToken)
+        internal virtual T GetResponseValue(string responseJson)
         {
-            string responseJson = await protocol.SendDataAsync(address, GetCommandJson(), cancellationToken);
+            if (string.IsNullOrEmpty(responseJson))
+            {
+                throw new SmartHomeMalformedResponseException(CommandType, CommandName, responseJson);
+            };
+
             var response = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, T>>>(responseJson, GetCommandSerializerOptions());
+
             if (response == null || !response.ContainsKey(CommandType) || !response[CommandType].ContainsKey(CommandName))
             {
-                throw new SmartHomeMalformedResponseException(CommandType, CommandName, address, responseJson);
+                throw new SmartHomeMalformedResponseException(CommandType, CommandName, responseJson);
             }
 
             T responseObject = response[CommandType][CommandName];
             if ((responseObject?.ErrorCode ?? 0) != 0)
             {
-                throw new SmartHomeException(CommandType, CommandName, address, responseObject!.ErrorCode, responseObject?.ErrorMessage);
+                throw new SmartHomeException(CommandType, CommandName, responseObject!.ErrorCode, responseObject?.ErrorMessage);
             }
             return responseObject!;
+        }
+
+        internal virtual async Task<T> ExecuteAsync(SmartHomeProtocol protocol, string address, CancellationToken cancellationToken)
+        {
+            string responseJson = await protocol.SendDataAsync(address, GetCommandJson(), cancellationToken);
+            return GetResponseValue(responseJson);
         }
 
         protected JsonSerializerOptions GetCommandSerializerOptions()

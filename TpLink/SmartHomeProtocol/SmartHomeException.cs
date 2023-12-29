@@ -12,16 +12,14 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
         public string CommandType { get; set; }
         public string CommandName { get; set; }
         public IDictionary<string, object>? CommandParameters { get; set; }
-        public string DeviceAddress { get; set; }
         public int ErrorCode { get; set; }
         public string? ErrorMessage { get; set; }
 
-        public SmartHomeException(string commandType, string commandName, string address, int errCode, string? errMessage) :
-            base($"error from '{address}' in response to {commandType}/{commandName}: ({errCode}) {errMessage}")
+        public SmartHomeException(string commandType, string commandName, int errCode, string? errMessage) :
+            base($"error in response to {commandType}/{commandName}: ({errCode}) {errMessage}")
         {
             CommandType = commandType;
             CommandName = commandName;
-            DeviceAddress = address;
             ErrorCode = errCode;
             ErrorMessage = errMessage;
         }

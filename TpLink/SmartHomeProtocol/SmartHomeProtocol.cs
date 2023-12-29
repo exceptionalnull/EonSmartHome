@@ -8,15 +8,15 @@ using System.Threading.Tasks;
 
 namespace EonData.SmartHome.TpLink.SmartHomeProtocol
 {
-    internal class SmartHomeProtocol
+    public class SmartHomeProtocol
     {
         /// <summary>
-        /// Gets the port number to use for network communications. (Default is 9999)
+        /// Gets the port number to use for network communications.
         /// </summary>
         public const int Port = 9999;
 
         /// <summary>
-        /// Gets or sets the default buffer size to use for network communications. (Default is 2048)
+        /// Gets or sets the default buffer size to use for network communications.
         /// </summary>
         public int ReadBufferSize { get; set; } = 2048;
 
@@ -28,7 +28,7 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
         /// <summary>
         /// Delay between sending discovery packets.
         /// </summary>
-        public TimeSpan DiscoveryDelay { get; set; } = TimeSpan.FromMilliseconds(600);
+        public TimeSpan DiscoveryDelay { get; set; } = TimeSpan.FromMilliseconds(125);
 
         /// <summary>
         /// Number of timeouts before giving up on discovery.
@@ -36,7 +36,7 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
         public int DiscoveryRetries { get; set; } = 2;
 
         /// <summary>
-        /// Gets or sets the number of discovery packets to send when discovering devices. (Default is 3)
+        /// Gets or sets the number of discovery packets to send when discovering devices.
         /// </summary>
         public int DiscoveryPackets { get; set; } = 3;
 
@@ -53,11 +53,11 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
             {
                 await tcp.ConnectAsync(address, Port, cancellationToken);
                 await using var netStream = tcp.GetStream();
-                var dataBytes = SmartHomeCypher.Encrypt(data);
+                var dataBytes = SmartHomeCypher.Encrypt(data, true);
                 await netStream.WriteAsync(dataBytes, 0, dataBytes.Length, cancellationToken);
                 var buffer = new byte[ReadBufferSize];
                 await netStream.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
-                response = SmartHomeCypher.Decrypt(buffer, buffer.Length);
+                response = SmartHomeCypher.Decrypt(buffer, true);
             }
 
             return response;
@@ -71,9 +71,11 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
         public async Task<IEnumerable<string>> DiscoverDevicesAsync(CancellationToken cancellationToken)
         {
             using UdpClient udp = new UdpClient(Port) { EnableBroadcast = true };
+            var sendTask = SendDiscoveryPacketsAsync(udp, cancellationToken);
             var listenTask = ListenForDevicesAsync(udp, cancellationToken);
-            await Task.WhenAll(SendDiscoveryPacketsAsync(udp, cancellationToken), listenTask);
-            return (await listenTask).Select(x => x.Address.ToString());
+            await Task.WhenAll(sendTask, listenTask);
+            var devices = await listenTask;
+            return devices.Select(x => x.Address.ToString());
         }
 
         /// <summary>
@@ -85,14 +87,14 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
         {
             // create discovery packet
             IPEndPoint broadcastEndpoint = new IPEndPoint(IPAddress.Broadcast, Port);
-            var command = new SmartHomeCommand<SmartHomeResponse>("system", "get_sysinfo");
+            var command = new SmartHomeCommand<SmartHomeDeviceInfoResponse>("system", "get_sysinfo");
             var commandJson = command.GetCommandJson();
-            var discoveryPacket = SmartHomeCypher.Encrypt(commandJson);
+            var discoveryPacket = SmartHomeCypher.Encrypt(commandJson, false);
 
             for (int i = 0; i < DiscoveryPackets; i++)
             {
                 await udp.SendAsync(discoveryPacket, discoveryPacket.Length, broadcastEndpoint);
-                await Task.Delay(DiscoveryDelay); // stagger the sending of packets
+                await Task.Delay(DiscoveryDelay, cancellationToken); // stagger the sending of packets
             }
         }
 
@@ -103,6 +105,7 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
         /// <returns></returns>
         private async Task<IEnumerable<IPEndPoint>> ListenForDevicesAsync(UdpClient udp, CancellationToken cancellationToken)
         {
+            var command = new SmartHomeCommand<SmartHomeDeviceInfoResponse>("system", "get_sysinfo");
             List<IPEndPoint> deviceAddresses = new();
             int timeouts = 0;
             while (timeouts < DiscoveryRetries)
@@ -110,8 +113,9 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
                 if (udp.Client.Poll(DiscoveryTimeout, SelectMode.SelectRead))
                 {
                     UdpReceiveResult response = await udp.ReceiveAsync(cancellationToken);
-                    string responseString = SmartHomeCypher.Decrypt(response.Buffer, response.Buffer.Length);
-                    if (!deviceAddresses.Contains(response.RemoteEndPoint))
+                    string responseString = SmartHomeCypher.Decrypt(response.Buffer, false);
+                    var responseValue = command.GetResponseValue(responseString);
+                    if (responseValue.DeviceId != null && !deviceAddresses.Contains(response.RemoteEndPoint))
                     {
                         deviceAddresses.Add(response.RemoteEndPoint);
                     }
@@ -121,7 +125,7 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
                     timeouts++;
                 }
             }
-            return deviceAddresses.AsReadOnly();
+            return deviceAddresses;
         }
     }
 }
