@@ -4,12 +4,33 @@ using System.Text.Json;
 
 namespace EonData.SmartHome.TpLink.SmartHomeProtocol
 {
+    /// <summary>
+    /// Represents a command to be sent to a TP-Link smart home device.
+    /// </summary>
+    /// <typeparam name="T">The type of response expected from the device.</typeparam>
     public class SmartHomeCommand<T> where T : SmartHomeResponse
     {
+        /// <summary>
+        /// Primary portion of the command object.
+        /// </summary>
         protected string CommandType { get; set; }
+
+        /// <summary>
+        /// Secondary portion of the command object.
+        /// </summary>
         protected string CommandName { get; set; }
+
+        /// <summary>
+        /// Parameter values to be sent with the command.
+        /// </summary>
         protected IDictionary<string, object>? CommandParameters { get; set; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SmartHomeCommand{T}"/> class.
+        /// </summary>
+        /// <param name="commandType">Primary portion of the command object.</param>
+        /// <param name="commandName">Secondary portion of the command object.</param>
+        /// <param name="commandParameters">Parameter values to be sent with the command.</param>
         public SmartHomeCommand(string commandType, string commandName, IDictionary<string, object>? commandParameters = null)
         {
             CommandType = commandType;
@@ -17,6 +38,10 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
             CommandParameters = commandParameters;
         }
 
+        /// <summary>
+        /// Generates the JSON string for this command.
+        /// </summary>
+        /// <returns></returns>
         internal virtual string GetCommandJson()
         {
             var commandObject = new Dictionary<string, object> {
@@ -27,6 +52,13 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
             return JsonSerializer.Serialize(commandObject, GetCommandSerializerOptions());
         }
 
+        /// <summary>
+        /// Deserializes the expected response from the given JSON string.
+        /// </summary>
+        /// <param name="responseJson">Response JSON string</param>
+        /// <returns>The expected response type for this command.</returns>
+        /// <exception cref="SmartHomeMalformedResponseException">The response from the device was not formatted as expected.</exception>
+        /// <exception cref="SmartHomeException">The resposne from the device indicated an error occured.</exception>
         internal virtual T GetResponseValue(string responseJson)
         {
             if (string.IsNullOrEmpty(responseJson))
@@ -49,12 +81,22 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
             return responseObject!;
         }
 
-        internal virtual async Task<T> ExecuteAsync(SmartHomeProtocol protocol, string address, CancellationToken cancellationToken)
+        /// <summary>
+        /// Sends the command to the device.
+        /// </summary>
+        /// <param name="address">Address of the device.</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns>The expected response type for this command.</returns>
+        internal virtual async Task<T> ExecuteAsync(string address, CancellationToken cancellationToken)
         {
-            string responseJson = await protocol.SendDataAsync(address, GetCommandJson(), cancellationToken);
+            string responseJson = await SmartHomeProtocol.SendDataAsync(address, GetCommandJson(), cancellationToken);
             return GetResponseValue(responseJson);
         }
 
+        /// <summary>
+        /// Returns the JsonSerializerOptions to use for command and response JSON.
+        /// </summary>
+        /// <returns>JsonSerializerOptions to use for command and response JSON.</returns>
         protected JsonSerializerOptions GetCommandSerializerOptions()
         {
             var jsonOptions = new JsonSerializerOptions() { PropertyNameCaseInsensitive = true };

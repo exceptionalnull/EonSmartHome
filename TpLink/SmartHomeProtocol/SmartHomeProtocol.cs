@@ -9,24 +9,27 @@ using System.Threading.Tasks;
 
 namespace EonData.SmartHome.TpLink.SmartHomeProtocol
 {
-    public class SmartHomeProtocol
+    /// <summary>
+    /// Allows for sending data to a TP-Link smart home device.
+    /// </summary>
+    public static class SmartHomeProtocol
     {
         /// <summary>
-        /// Gets the port number to use for network communications.
+        /// Port number to use for network communications.
         /// </summary>
-        public const int Port = 9999;
+        public static int Port = 9999;
 
         /// <summary>
-        /// Gets or sets the default buffer size to use for network communications.
+        /// Default buffer size to use for network communications.
         /// </summary>
-        public int ReadBufferSize { get; set; } = 2048;
+        public static int ReadBufferSize { get; set; } = 2048;
 
         /// <summary>
         /// Asynchronously sends a string of data to the smart home device and returns the response string.
         /// </summary>
         /// <param name="data">JSON data command string</param>
         /// <returns>JSON data response string</returns>
-        public async Task<string> SendDataAsync(string address, string data, CancellationToken cancellationToken)
+        public static async Task<string> SendDataAsync(string address, string data, CancellationToken cancellationToken)
         {
             using var tcp = new TcpClient();
             await tcp.ConnectAsync(address, Port, cancellationToken);

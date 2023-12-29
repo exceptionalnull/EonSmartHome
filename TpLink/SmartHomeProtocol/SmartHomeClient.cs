@@ -17,7 +17,6 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
     public class SmartHomeClient
     {
         public string Address { get; set; }
-        private readonly SmartHomeProtocol protocol = new SmartHomeProtocol();
 
         public SmartHomeClient(string deviceAddress) => Address = deviceAddress;
 
@@ -53,6 +52,6 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         public Task<T> SendCommandAsync<T>(SmartHomeCommand<T> command, CancellationToken cancellationToken) where T : SmartHomeResponse =>
-            command.ExecuteAsync(protocol, Address, cancellationToken);
+            command.ExecuteAsync(Address, cancellationToken);
     }
 }
