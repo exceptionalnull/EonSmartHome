@@ -74,7 +74,7 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
         {
             // create discovery packet
             IPEndPoint broadcastEndpoint = new(IPAddress.Broadcast, SmartHomeProtocol.Port);
-            var discoveryPacket = SmartHomeCypher.Encrypt(command.GetCommandJson(), false);
+            var discoveryPacket = SmartHomeCypher.Encrypt(command.GetCommandJson());
 
             for (int i = 0; i < DiscoveryPackets; i++)
             {
@@ -107,7 +107,7 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
             {
                 // receive and process response
                 UdpReceiveResult response = await udp.ReceiveAsync(cancellationToken);
-                var deviceInfo = command.GetResponseValue(SmartHomeCypher.Decrypt(response.Buffer, false));
+                var deviceInfo = command.GetResponseValue(SmartHomeCypher.Decrypt(response.Buffer));
 
                 // this receiver will also catch discovery packets which should be ignored, but they will have an empty device info object.
                 if (deviceInfo.HardwareId != null)

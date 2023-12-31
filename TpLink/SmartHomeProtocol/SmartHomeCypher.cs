@@ -21,10 +21,10 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
         /// </summary>
         /// <param name="data">Data to be encrypted</param>
         /// <returns>Encrypted byte array</returns>
-        public static byte[] Encrypt(string data, bool usePadding)
+        public static byte[] Encrypt(string data)
         {
 
-            List<byte> result = usePadding ? new() { 0, 0, 0, (byte)data.Length } : new();
+            List<byte> result = new();
             var key = INITIAL_CYPHERKEY;
 
             foreach (int dataChar in data)
@@ -43,12 +43,12 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
         /// <param name="data">Encrypted byte array</param>
         /// <param name="bufferLength">Length of buffer array</param>
         /// <returns>Decrypted string</returns>
-        public static string Decrypt(byte[] data, bool usePadding)
+        public static string Decrypt(byte[] data)
         {
             var key = INITIAL_CYPHERKEY;
 
             var result = new StringBuilder();
-            for (int i = (usePadding ? 4 : 0); i < data.Length; i++)
+            for (int i = 0; i < data.Length; i++)
             {
                 if (data[i] == 0)
                 {
