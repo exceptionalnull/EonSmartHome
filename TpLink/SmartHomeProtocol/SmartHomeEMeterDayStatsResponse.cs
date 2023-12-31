@@ -5,7 +5,7 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
 {
     public class SmartHomeEMeterDayStatsResponse : SmartHomeResponse
     {
-        [JsonPropertyName("month_list")]
+        [JsonPropertyName("day_list")]
         public IEnumerable<SmartHomeEMeterDayStat> Days { get; set; }
     }
 }
