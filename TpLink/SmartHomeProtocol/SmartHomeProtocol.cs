@@ -38,14 +38,18 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
             byte[] commandPacket = new byte[dataBytes.Length + 4];
             commandPadding.CopyTo(commandPacket, 0);
             dataBytes.CopyTo(commandPacket, 4);
-            await netStream.WriteAsync(commandPacket, 0, dataBytes.Length, cancellationToken);
+            await netStream.WriteAsync(commandPacket, 0, commandPacket.Length, cancellationToken);
 
-            // read response padding
-            byte[] padding = new byte[4];
-            await netStream.ReadAsync(padding, 0, 4, cancellationToken);
+            byte[] padding = await ReadBytesAsync(netStream, 4, cancellationToken);
             int length = padding[2] * 256 + padding[3];
 
             // read response data
+            byte[] responseBytes = await ReadBytesAsync(netStream, length, cancellationToken);
+            return SmartHomeCypher.Decrypt(responseBytes);
+        }
+
+        private static async Task<byte[]> ReadBytesAsync(NetworkStream netStream, int length, CancellationToken cancellationToken)
+        {
             byte[] responseBytes = new byte[length];
             do
             {
@@ -54,8 +58,7 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
                 buffer.CopyTo(responseBytes, responseBytes.Length - length);
                 length -= readBytes;
             } while (length > 0);
-            
-            return SmartHomeCypher.Decrypt(responseBytes);
+            return responseBytes;
         }
     }
 }
