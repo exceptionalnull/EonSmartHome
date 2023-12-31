@@ -43,6 +43,10 @@ try
     //var d = await client.SetLocationAsync(234333 / 10000 * -1, 1800000 / 10000, cts.Token);
     //var e = await client.GetMonthStatsAsync(2023, cts.Token);
 
+
+    var e = await client.GetDayStatsAsync(DateTime.Now.Month, DateTime.Now.Year, cts.Token);
+
+
     /* discovery */
     var discovery = new SmartHomeDeviceDiscovery();
     var r = await discovery.DiscoverDevicesAsync(cts.Token);

@@ -66,7 +66,16 @@ namespace EonData.SmartHome.TpLink.SmartHomeProtocol
                 throw new SmartHomeMalformedResponseException(CommandType, CommandName, responseJson);
             };
 
-            var response = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, T>>>(responseJson, GetCommandSerializerOptions());
+            Dictionary<string, Dictionary<string, T>>? response = null;
+            try
+            {
+                response = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, T>>>(responseJson, GetCommandSerializerOptions());
+            }
+            catch (JsonException)
+            {
+                throw new SmartHomeMalformedResponseException(CommandType, CommandName, responseJson);
+            }
+            
 
             if (response == null || !response.ContainsKey(CommandType) || !response[CommandType].ContainsKey(CommandName))
             {
